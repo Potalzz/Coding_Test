@@ -13,7 +13,7 @@
 function solution(n, k) {
     let count = 0;
     
-    function decimal(num) {
+    function isPrime(num) {
         num = parseInt(num)
         if (num === 1) return false
         for (let i = 2; i <= Math.sqrt(num); i++) {
@@ -27,7 +27,7 @@ function solution(n, k) {
     let nums = n.toString(k).split(0).filter((el) => el)
     
     for (num of nums) {
-        if (decimal(num)) count ++
+        if (isPrime(num)) count ++
     }
     
     
