@@ -1,30 +1,27 @@
-/*
-토핑 종류 수를 반으로 나누는 방법의 수를 반환
-
-종류 수가 홀수이면 0 반환
-map 객체 -> set ?
-값을 추가하는 건 Set이 좋고, 값을 하나 씩 빼면서 확인하는 건 Map이 좋다.
-
-*/
-
 function solution(topping) {
-    let count = 0
-    const typeMap = new Map()
-    const typeSet = new Set()
-    const various = new Set([...topping]).size
-    
-    topping.forEach((el) => typeMap.set(el, (typeMap.get(el) + 1 || 1)))
-    
-    topping.forEach((el) => {
-        typeSet.add(el)
-        typeMap.set(el, (typeMap.get(el) -1))
-        
-        if (typeMap.get(el) === 0) typeMap.delete(el)
-        
-        if (typeSet.size >= various / 2) {
-            if (typeSet.size === typeMap.size) count ++
+    const a = new Set()
+    const b = {}
+
+    let answer = 0;
+    let check = 0
+
+    for (let i = 0; i < topping.length; i++) {        
+        if (b[topping[i]]) {
+            b[topping[i]]++
+        } else {
+            b[topping[i]] = 1
+            check++            
         }
-        
-    })    
-    return count;
+    }
+
+    for (let i = 0; i < topping.length; i++) {
+        a.add(topping[i])
+        b[topping[i]]--
+
+        if (!b[topping[i]]) check--
+        if (a.size === check) answer++
+    }
+
+
+    return answer;
 }
