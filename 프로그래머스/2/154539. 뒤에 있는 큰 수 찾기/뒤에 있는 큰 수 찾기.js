@@ -9,27 +9,15 @@
 큰 수가 있는지 확인하고
 */
 function solution(numbers) {
-    let answer = []
+    let result = Array(numbers.length).fill(-1)
     let stack = []
-    let maxNum = 0
-    for (let i = numbers.length-1; i >= 0; i --) {
-        if (numbers[i] >= maxNum) {
-            maxNum = numbers[i]
-            answer.push(-1)
-            stack = []
-            stack.push(numbers[i])
-        } else {
-            while (true) {
-                if (numbers[i] < stack[0]){
-                    answer.push(stack[0])
-                    stack.unshift(numbers[i])        
-                    break
-                } else {
-                    stack.shift()
-                }
-            }
+    for (let i = 0; i < numbers.length; i++) {
+        while (stack.length > 0 && numbers[stack[stack.length-1]] < numbers[i]) {
+            result[stack.pop()] = numbers[i]
         }
+        stack.push(i)
+        
     }
     
-    return answer.reverse()
+    return result
 }
