@@ -7,20 +7,18 @@ inddex가 numbers.length와 동일하면 숫자의 합계를 확인하고 종료
 */
 
 function solution(numbers, target) {
-    let count = 0;
+    let count = 0
     let length = numbers.length
-    function dfs (index, sum) {
+    function dfs(index, sum) {
         if (index === length) {
-            if (sum === target) {
-                count += 1
-            }
+            if(sum === target) count ++
             return
         }
         
-        dfs(index + 1, sum + numbers[index])
-        dfs(index + 1, sum - numbers[index])
+            dfs(index + 1, sum + numbers[index]) 
+            dfs(index + 1, sum - numbers[index])
     }
-    
     dfs(0,0)
+    
     return count;
 }
