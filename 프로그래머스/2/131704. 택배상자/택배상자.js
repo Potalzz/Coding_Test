@@ -1,5 +1,7 @@
 /*
-종료 조건 : priority의 길이가 0이고, 보관함에서 꺼내도 넣지 못할 때
+박스를 컨베이어 벨트에 놓인 대로 순서를 정렬한다.
+shift를 통해 박스를 빼오면 시간복잡도가 초과되므로, pop을 통해 연산
+종료 조건 : priority의 길이가 0이고, 보관함에서 꺼내도 넣지 못할 때.
 */
 
 function solution(order) {
@@ -31,15 +33,6 @@ function solution(order) {
         else {
             lastBox = box
             temp.push(box)
-        }
-    }
-    
-    // 보조 컨베이어 벨트가 빌 때 까지 분류 작업
-    while (true) {
-        if (temp.pop() === index) {
-            index ++
-        } else {
-            break
         }
     }
     
