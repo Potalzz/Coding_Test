@@ -3,47 +3,45 @@
 */
 
 function solution(order) {
-    let count = 0
     let priority = []
     let length = order.length
     // 맨 뒤부터 시작해서 박스가 놓인 순서대로, 해당 박스에 순서를 담아 정렬
     for (let i = 0; i < order.length; i ++) {
         priority[length - order[i]] = i+1
     }
-    
     // 임시 보관함 생성
     let temp = []
     // 순서를 나타내는 변수
     let index = 1
-    
-    // 컨테이너 벨트가 빌 때 까지 박스 분류 작업
+    let lastBox = 0
+    // 컨베이어 벨트가 빌 때 까지 박스 분류
     while (priority.length > 0) {
         let box = priority.pop()
         if (box === index) {
-            count ++
             index ++
-            while (true) {
-                if(temp[temp.length-1] === index) {
+            // 보조 컨베이어 벨트 마지막 박스가 해당하면 빼주기
+            while (temp.length > 0) {
+                if(lastBox === index) {
                     temp.pop()
-                    count++
+                    lastBox = temp[temp.length-1]
                     index++
                 } else break
             }
         }
         else {
+            lastBox = box
             temp.push(box)
         }
     }
     
-    // 보조 컨테이너 벨트가 빌 때 까지 분류 작업
+    // 보조 컨베이어 벨트가 빌 때 까지 분류 작업
     while (true) {
         if (temp.pop() === index) {
-            count ++
             index ++
         } else {
             break
         }
     }
     
-    return count
+    return index - 1
 }
