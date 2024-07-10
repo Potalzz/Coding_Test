@@ -5,32 +5,25 @@ shift를 통해 박스를 빼오면 시간복잡도가 초과되므로, pop을 �
 */
 
 function solution(order) {
-    let priority = []
-    let length = order.length
-    // 맨 뒤부터 시작해서 박스가 놓인 순서대로, 해당 박스에 순서를 담아 정렬
-    for (let i = 0; i < order.length; i ++) {
-        priority[length - order[i]] = i+1
-    }
-    // 임시 보관함 생성
-    let temp = []
-    // 순서를 나타내는 변수
-    let index = 1
-    // 컨베이어 벨트가 빌 때 까지 박스 분류
-    while (priority.length > 0) {
-        let box = priority.pop()
-        if (box === index) {
-            index ++
-            // 보조 컨베이어 벨트 마지막 박스가 해당하면 빼주기
-            while (temp.length > 0) {
-                if(temp[temp.length-1] === index) {
-                    temp.pop()
-                    index++
-                } else break
-            }
+    const stack = [];
+    let currentBox = 1;
+    let index = 0;
+    const n = order.length;
+
+    for (let i = 0; i < n; i++) {
+        const targetBox = order[i];
+
+        while (currentBox <= targetBox) {
+            stack.push(currentBox++);
         }
-        else {
-            temp.push(box)
+
+        if (stack[stack.length - 1] === targetBox) {
+            stack.pop();
+            index++;
+        } else {
+            break;
         }
     }
-    return index - 1
+
+    return index;
 }
