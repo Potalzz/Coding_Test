@@ -15,7 +15,6 @@ function solution(order) {
     let temp = []
     // 순서를 나타내는 변수
     let index = 1
-    let lastBox = 0
     // 컨베이어 벨트가 빌 때 까지 박스 분류
     while (priority.length > 0) {
         let box = priority.pop()
@@ -23,18 +22,15 @@ function solution(order) {
             index ++
             // 보조 컨베이어 벨트 마지막 박스가 해당하면 빼주기
             while (temp.length > 0) {
-                if(lastBox === index) {
+                if(temp[temp.length-1] === index) {
                     temp.pop()
-                    lastBox = temp[temp.length-1]
                     index++
                 } else break
             }
         }
         else {
-            lastBox = box
             temp.push(box)
         }
     }
-    
     return index - 1
 }
