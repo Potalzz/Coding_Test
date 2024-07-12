@@ -6,39 +6,6 @@
 마지막에 최종 값 반환. 숫자는 둘다 넣어줌.
 length는 따로 측정해준다.
 */
-
-function solution(operations) {
-    let answer = []
-    let minHeap = new MinHeap()
-    let length = 0
-    for(let i = 0; i < operations.length; i ++) {
-        if (operations[i][0] === "I") {
-            let num = parseInt(operations[i].slice(2))
-            minHeap.add(num)
-            length ++
-        } else if(operations[i][2] === "-") {
-            minHeap.remove()
-            if (length > 0) length --
-        } else {
-            minHeap.removeMax()
-            if (length > 0) length --
-        }
-    }
-    
-    if(length === 0) {
-        answer = [0,0]
-    } else if (length >= 2) {
-        answer.push(minHeap.removeMax())
-        answer.push(minHeap.peak())
-    } else {
-        answer.push(minHeap.peak())
-        answer.push(minHeap.peak())
-    }
-
-    
-    return answer
-}
-
 // 최소힙 구현
 class MinHeap {
     constructor() {
@@ -134,3 +101,33 @@ class MinHeap {
         return max
     }
 }
+
+function solution(operations) {
+    let answer = []
+    let minHeap = new MinHeap()
+    let length = 0
+    for(let i = 0; i < operations.length; i ++) {
+        if (operations[i][0] === "I") {
+            let num = parseInt(operations[i].slice(2))
+            minHeap.add(num)
+            length ++
+        } else if(operations[i][2] === "-") {
+            minHeap.remove()
+            if (length > 0) length --
+        } else {
+            minHeap.removeMax()
+            if (length > 0) length --
+        }
+    }
+    
+    if(length === 0) {
+        answer = [0,0]
+    } else if (length >= 2) {
+        answer = [minHeap.removeMax(), minHeap.peak()]
+    } else {
+        answer = [minHeap.peak(), minHeap.peak()]
+    }
+
+    return answer
+}
+
