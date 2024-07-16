@@ -3,7 +3,7 @@
 세 가지 연산을 사용해서 x를 y로 만드는 최소 연산 횟수 반환.
 불가능하면 -1 반환
 
-완전탐색 DFS
+최단거리 BFS
 *2, *3, +n 3가지 경우의 수로 진행
 인수로 넣을 값
 (총합, 연산 횟수)
@@ -12,38 +12,21 @@
 */
 
 function solution(x, y, n) {
-    function calc(num, i) {
-        switch(i) {
-            case 1 :
-                return num - n
-            case 2 :
-                if(num % 2 === 0) return num / 2
-                else return 0
-            case 3 :
-                if (num % 3 === 0) return num / 3
-                else return 0
-        }
-    }
-    
-    function bfs() {
-        let queue = [[y,0]]
-        const visit = {}
-        visit[y] = 1
-        while (queue.length) {
-            let [curValue, count] = queue.shift()
-            if(curValue === x) return count
-            for(let i = 1; i <= 3; i ++) {
-                let nextValue = calc(curValue, i)
-                if(nextValue >= x && visit[nextValue] !== 1) {
-                    visit[nextValue] = 1
-                    queue.push([nextValue, count+1])
-                }
+    if(x === y) return 0
+    const dp = {}
+    dp[x] = 0
+    let datas = [x]
+    while(datas.length) {
+        const newDatas = []
+        for(const data of datas) {
+            for(const value of [data + n, data * 2, data * 3]) {
+                if (value > y || dp[value])  continue
+                if (value === y) return dp[data] + 1
+                dp[value] = dp[data] + 1
+                newDatas.push(value)
             }
-            
         }
-        return -1
+        datas = newDatas
     }
-    
-    
-    return bfs()
+    return -1
 }
