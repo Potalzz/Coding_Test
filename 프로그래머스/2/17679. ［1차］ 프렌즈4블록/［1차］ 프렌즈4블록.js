@@ -1,78 +1,81 @@
+/*
+필요한 기능들을 정의하고, 각 기능별 함수를 만들어준다.
+
+지울 블록을 찾는 함수
+board와 동일한 크기의 map에 false로 채워주고, 터지는 블럭일 경우 true로 바꿔준다.
+
+블록 지우고 개수 세는 함수
+블록 찾는 함수에서 map을 받아오고, true로 되어있는 값을 board에서 ''로 바꿔준다.
+
+블록 떨어뜨리는 함수
+같은 행의 맨 아래부터 위로 올라가면서 비어있는 칸에 위의 값을 채워준다.
+
+메인 게임 로직
+각 기능별 함수를 실행
+*/
+
 function solution(m, n, board) {
-    // Convert board to a 2D array
-    let boardArray = board.map(row => row.split(''));
-
-    // Helper function to check and mark blocks for removal
-    function markRemovals() {
-        const toRemove = Array.from({ length: m }, () => Array(n).fill(false));
-        let found = false;
-
-        for (let y = 0; y < m - 1; y++) {
-            for (let x = 0; x < n - 1; x++) {
-                const block = boardArray[y][x];
-                if (block &&
-                    block === boardArray[y][x + 1] &&
-                    block === boardArray[y + 1][x] &&
-                    block === boardArray[y + 1][x + 1]) {
-                    toRemove[y][x] = toRemove[y][x + 1] = toRemove[y + 1][x] = toRemove[y + 1][x + 1] = true;
-                    found = true;
+    let boardArray = board.map((el) => el.split(""))
+    
+    // 지울 블럭 찾는 함수
+    function findRemove() {
+        let removeMap = Array.from({length : m}, () => Array(n).fill(false))        
+        let found = false
+        
+        for(let y = 0; y < m - 1; y ++) {
+            for (let x = 0; x < n - 1; x ++) {
+                let cur = boardArray[y][x]
+                if (cur &&
+                    cur === boardArray[y][x + 1] &&
+                    cur === boardArray[y + 1][x] &&
+                    cur === boardArray[y + 1][x + 1]) {
+                    removeMap[y][x] = removeMap[y][x + 1] = removeMap[y + 1][x] = removeMap[y + 1][x + 1] = true
+                    found = true
                 }
             }
         }
-
-        return found ? toRemove : null;
+        return found ? removeMap : ''
     }
-
-    // Helper function to remove marked blocks and return the count of removed blocks
-    function removeBlocks(toRemove) {
-        let count = 0;
-        for (let y = 0; y < m; y++) {
-            for (let x = 0; x < n; x++) {
-                if (toRemove[y][x]) {
-                    boardArray[y][x] = '';
-                    count++;
+    
+    // 블럭 지우고 지운 개수 반환 힘수
+    function removeBlocks(removeMap) {
+        let count = 0
+        for (let y = 0; y < m; y ++) {
+            for (let x = 0; x < n ; x ++) {
+                if (removeMap[y][x]) {
+                    boardArray[y][x] = ''
+                    count ++
                 }
             }
         }
-        return count;
+        return count
     }
-
-    // Helper function to drop blocks after removals
-    function dropBlocks() {
-        for (let x = 0; x < n; x++) {
-            let emptyRow = m - 1;
-            for (let y = m - 1; y >= 0; y--) {
-                if (boardArray[y][x] !== '') {
+    
+    // 블록 떨어뜨리는 함수
+    function dropBlocks(gameMap) {
+        for (let x = 0; x < n; x ++) {
+            let emptyRow = m - 1
+            for (let y = m - 1; y >= 0; y --) {
+                if (gameMap[y][x] !== '') {
                     if (y !== emptyRow) {
-                        boardArray[emptyRow][x] = boardArray[y][x];
-                        boardArray[y][x] = '';
+                        gameMap[emptyRow][x] = gameMap[y][x]
+                        gameMap[y][x] = ''
                     }
-                    emptyRow--;
+                    emptyRow --
                 }
             }
         }
+        return gameMap
     }
 
-    let totalRemoved = 0;
-
+    let totalRemoved = 0
+    // 메인 게임 로직
     while (true) {
-        const toRemove = markRemovals();
-        if (!toRemove) break;
-
-        totalRemoved += removeBlocks(toRemove);
-        dropBlocks();
+        let removeMap = findRemove()
+        if (!removeMap) break
+        totalRemoved += removeBlocks(removeMap)
+        dropBlocks(boardArray)
     }
-
-    return totalRemoved;
+    
+    return totalRemoved
 }
-
-// 테스트 예제 실행
-const m1 = 4;
-const n1 = 5;
-const board1 = ["CCBDE", "AAADE", "AAABF", "CCBBF"];
-console.log(solution(m1, n1, board1)); // 14
-
-const m2 = 6;
-const n2 = 6;
-const board2 = ["TTTANT", "RRFACC", "RRRFCC", "TRRRAA", "TTMMMF", "TMMTTJ"];
-console.log(solution(m2, n2, board2)); // 15
