@@ -24,14 +24,13 @@ function solution(n, wires) {
         tree[node[0]].push(node[1])
         tree[node[1]].push(node[0])
     }
-    console.log(tree)
     
-    
-    const countChildNode = (nodeTree, parentNode, nodeNum) => {
+    // 해당 노드와 연결된 노드의 자식 노드 개수 세는 함수
+    const countChildNode = (parentNode, nodeNum) => {
         let visited = new Array(n+1).fill(false)
         visited[nodeNum] = true
         visited[parentNode] = true
-        let queue = JSON.parse(JSON.stringify(nodeTree[nodeNum]))
+        let queue = JSON.parse(JSON.stringify(tree[nodeNum]))
         let countChild = 1
         while (queue.length > 0) {
             let childNode = queue.shift()
@@ -39,11 +38,11 @@ function solution(n, wires) {
             visited[childNode] = true
             countChild ++
             
-            for(let child of nodeTree[childNode]) {
+            for(let child of tree[childNode]) {
                 if (!visited[child]) {
                     visited[child] = true
                     countChild ++
-                    for (let item of nodeTree[child]) {
+                    for (let item of tree[child]) {
                         queue.push(item)
                     }
                 }
@@ -51,35 +50,15 @@ function solution(n, wires) {
         }
         return countChild
     }
-    // let topNode = 0
-    // for (let i = 1; i < tree.length; i ++) {
-    //     if (countChildNode(i) > topNode) {
-    //         topNode = i
-    //     }
-    // }
-    // console.log("topNode = ",topNode)
-    
-    // for(let node of tree[topNode]) {
-    //     let value = countChildNode(node)
-    //     console.log("value", value)
-    //     if (Math.abs(n - value * 2) < answer) {
-    //         answer = Math.abs(n - value * 2)
-    //     }
-    // }
-    // console.log(answer)
-    
     
     let answer = n
-    let result = n
-    let numList = []
-    let half = Math.floor(n / 2)
+    // 자식 노드 개수중 정답과 가장 근접한 값 찾기
     for(let i = 1; i <= n; i++) {
-        
         for (let node of tree[i]) {
-            numList.push(Math.abs(n - countChildNode(tree, i, node) * 2))
-            // console.log(countChildNode(tree, i, node))
+            let value = Math.abs(n - countChildNode(i, node) * 2)
+            if (value < answer ) answer = value
         }
-        
     }
-    return Math.min(...numList)
+    
+    return answer
 }
