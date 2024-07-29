@@ -15,43 +15,35 @@ Array 방에 예약 순번으로 예약정보를 담는 rooms
 */
 
 function solution(book_time) {
-    let inMap = new Map()
-    let outMap = new Map()
-    let rooms = new Array()
-    // 시간을 문자열에서 숫자로 변환, 퇴실시간에 10분 더해줌.
-    book_time.forEach((el) => {
-        el[0] = parseInt(el[0].split(":").join(""))
-        
-        if (el[1][3] >= 5) {
-            el[1] = parseInt(el[1].split(":").join("")) + 100 - 50
+    // 시간을 분으로 변환하는 함수
+    const toMinutes = (time) => {
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours * 60 + minutes;
+    };
+
+    // 퇴실 시간에 10분 추가하는 함수
+    const addCleaningTime = (endTime) => endTime + 10;
+
+    // 시간을 분 단위로 변환
+    const bookings = book_time.map(([start, end]) => [toMinutes(start), addCleaningTime(toMinutes(end))]);
+
+    // 입실 시간 순으로 정렬
+    bookings.sort((a, b) => a[0] - b[0]);
+
+    // 종료 시간을 저장하는 최소 힙
+    const minHeap = [];
+
+    // 최소 힙을 사용하여 객실 배정
+    for (const [start, end] of bookings) {
+        if (minHeap.length && minHeap[0] <= start) {
+            // 가장 빨리 끝나는 예약을 제거
+            minHeap.shift();
         }
-        else {
-            el[1] = parseInt(el[1].split(":").join("")) + 10
-        }
-    })
-    rooms.push(0)
-    // 입실 시간 순서대로 원본 배열 정렬
-    book_time.sort((a,b) => a[0] - b[0])
-    let test = new Array()
-    // 입실,퇴실 시간별로 map생성.
-    for (let i = 0; i < book_time.length; i ++) {
-        inMap.set(i, book_time[i][0])
-        outMap.set(i, book_time[i][1])
+        // 새로운 예약의 종료 시간을 추가
+        minHeap.push(end);
+        // 종료 시간을 정렬하여 가장 빨리 끝나는 시간을 항상 앞에 두도록 유지
+        minHeap.sort((a, b) => a - b);
     }
-    
-    for(let i = 1; i < book_time.length; i ++) {
-        let entrance = false
-        for (let j = 0; j < rooms.length; j ++) {
-            if (outMap.get(rooms[j]) <= inMap.get(i)) {
-                rooms[j] = i
-                entrance = true
-                break
-            }
-        }
-        if (!entrance) rooms.push(i)
-    }
-    // console.log("rooms : ", rooms)
-    // console.log("원본 배열", book_time)
-    // console.log("Map 데이터", inMap, outMap)
-    return rooms.length
+
+    return minHeap.length;
 }
