@@ -1,51 +1,42 @@
 /*
-숫자의 개수가 최대 7개이므로 조합할 수 있는 모든 숫자를 조합해보고,
-소수인지 판별.
-
-DFS로 모든 수의 조합 구하기
-인수 (숫자)
-종료 조건 , 숫자의 길이가 length에 다다를 경우
+1. 숫자를 배열로 만든다.
+2. DFS를 통해 모든 숫자 조합의 경우의 수를 조합한다.
+3. 숫자를 소수 판별 함수에 넣어 확인한다.
+4. 총 소수의 개수를 반환한다.
 */
 
-function isPrime(num) {
-        if (num < 2) return false
-        if (num === 2) return true
-        for(let i = 2; i <= Math.sqrt(num); i++) {
-            if (num % i === 0) {
-                return false
-            }
-        }
-        return true
-    }
-
-
 function solution(numbers) {
-    
-    
-    
+    let numsArr = numbers.split("")
+    let visited = new Array(numbers.length).fill(false)
+    let nums = new Set()
     let count = 0
-    numbers = numbers.split("")
-    let length = numbers.length
-    let results = new Set()
+    function dfs(arr, visited, num) {
+    if (num.length === arr.length) return
     
-    let visitedMap = Array(length).fill(false)
-    
-    function dfs(num, visited) {
-        results.add(parseInt(num))
-        if (num.length === length) return
-        
-        for(let i = 0; i < length; i ++) {
-            if (!visited[i]) {
-                visited[i] = true
-                dfs(num + numbers[i], visited)
-                visited[i] = false
+    for (let i = 0; i < arr.length; i ++) {
+        if (!visited[i]) {
+            let cur = parseInt(num + arr[i])
+            if (!nums.has(cur) && isPrime(cur)) {
+                count ++
             }
+            nums.add(cur)
+            visited[i] = true
+            dfs(arr, visited, cur)
+            visited[i] = false
         }
     }
-    dfs('', visitedMap)
-    for (let value of results) {
-        if (isPrime(value)) count ++
-    }
-    
-    return count - 1
 }
+    
+    dfs(numbers, visited, "")
+    
+    return count
+}
+
+function isPrime(num) {
+    if (num <= 1) return false
+    for(let i = 2; i <= Math.sqrt(num); i++ ) {
+        if (num % i === 0) return false
+    }
+    return true
+}
+
