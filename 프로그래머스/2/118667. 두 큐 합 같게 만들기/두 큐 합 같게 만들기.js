@@ -1,33 +1,31 @@
 /*
-가장 먼저 각 큐의 원소 합을 같게 만들 수 있는지 판별한다.
-불가능한 경우
-가장 큰 값이 총 합의 절반을 넘는 경우
-총 합이 홀수인 경우
-두 배열이 서로 바뀔 때 까지 안되는 경우
-ex) [7,3]    [2,10]
-    [7,3,2]  [10]
-    [3,2]    [10,7]
-    [3,2,10] [7]
-    [2,10]   [7,3]
-    
-우선 순위
-더 큰 값을 가진 큐에서 빼기.
-
+두 큐를 이어붙인 뒤, 두 개의 포인터를 통해 한쪽의 합산을 계산한다.
 */
 
 function solution(queue1, queue2) {
-    let sum1 = queue1.reduce((sum,el) => sum + el)
-    let sum2 = queue2.reduce((sum,el) => sum + el)
-    const half = (sum1 + sum2) /  2
-    const q = [...queue1, ...queue2]
-    let q1Pointer = 0
-    let q2Pointer = queue1.length
-    for(let cnt = 0; cnt < queue1.length * 3; cnt++) {
-        if (sum1 === half) {
-            return cnt
-        }
-        sum1 = sum1 > half ? sum1 - q[q1Pointer++ % q.length] : sum1 + q[q2Pointer++ % q.length]
-    }
+    let q1 = queue1.reduce((total,el) => {
+        return total += el}, 0)
+    let q2 = queue2.reduce((total,el) => {
+        return total += el}, 0)
+    let goal = (q1 + q2) / 2
     
-    return -1
+    let queue = [...queue1, ...queue2]
+    let start = 0
+    let end = queue1.length-1
+    let sum = q1
+    let count = 0
+    while(sum !== goal && count <= queue1.length * 3) {
+        if (sum > goal) {
+            sum -= queue[start]
+            start ++
+            count ++
+        } else {
+            sum += queue[end+1]
+            end ++
+            count ++
+        }
+    }
+    const answer = sum === goal ? count : -1
+    
+    return answer
 }
