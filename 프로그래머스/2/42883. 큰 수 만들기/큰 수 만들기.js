@@ -1,18 +1,13 @@
-/*
-
-
-*/
-
 function solution(number, k) {
-    let arr = []
-    for(let i = 0; i < number.length; i ++) {
-        while (k > 0 && arr.length > 0 && number[i] > arr[arr.length-1]) {
+    let stk = []
+    for (let i = 0; i < number.length; i ++) {
+        while (k > 0 && stk.length > 0 && number[i] > stk[stk.length - 1]) {
             k --
-            arr.pop()
+            stk.pop()
         }
-        arr.push(number[i])
+        stk.push(number[i])
     }
-    arr.splice(arr.length - k, k)
     
-    return arr.join("")
+    stk.splice(stk.length-k,k)
+    return stk.join("")
 }
