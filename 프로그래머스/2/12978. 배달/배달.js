@@ -1,76 +1,47 @@
 /*
-다익스트라 알고리즘으로 구현 
+다익스트라로 알고리즘
+다익스트라 ? => 시작 노드에서 다른 모든 노드까지의 최단 거리를 구하는 알고리즘.
 
-계획
-1. 시작 노드인 1번 노드에서 모든 노드마다의 경로를 구해 저장한다.
-2. 경로를 구하고, 해당 노드에서 최단 거리인 노드에서부터 다시 다른 노드간의 경로를 구한다.
-3. 2번에서 구한 경로의 값이, 처음 구한 경로보다 가까울 경우, 거리를 업데이트한다.
-
-위 계획이 성립되기 위한 조건
-1. 노드간의 연결 상태를 알고 있어야 한다.
-2. 노드간의 거리는 양수여야 한다.
-3. 모든 노드는 시작 노드에서 출발해 도달할 수 있어야 한다.
-
-코드로 구현
-1. 각 노드마다 인접 노드들을 담은 2차원 배열을 만들어준다.
-2. 시작 노드와 연결된 노드들의 거리를 저장해준다.
-3. 시작 노드에서부터 최단 거리인 노드로 이동해, 해당 노드에서 인접 노드들의 거리를 계산하고 거리가 더 짧다면 거리를 업데이트 해준다.
-4. 3번의 과정을 마지막 노드까지 반복한다.
+동작 과정
+1. 시작 노드에서 각 노드까지의 거리를 배열에 저장한다.
+2. 거리를 저장한 배열에서 가장 가까운 노드로 방문 후 방문처리를 해주고, 해당 노드를 거쳐 다른 노드로 이동하는 거리가 더욱 가까울 경우 거리를 저장한 배열을 업데이트 해준다.
+3. 2의 과정을 모든 노드를 방문할 때 까지 반복하며 거리를 저장한 배열을 업데이트 해준다.
 */
 
 function solution(N, road, K) {
-    let costs = new Array(N+1).fill(Infinity)
-    costs[1] = 0
-    const visited = new Array(N+1).fill(false)
+    // 저장할 때 편의를 위해 0번 노드는 비워놓는다.
+    const visited = new Array(N + 1).fill(false)
+    visited[0] = true
+    const nodeCosts = new Array(N + 1).fill(Infinity)
+    nodeCosts[1] = 0
     
-    // 초기 비용 설정
-    for(let i = 0; i < road.length; i ++) {
-        if (road[i][0] === 1) {
-            costs[road[i][1]] = Math.min(costs[road[i][1]], road[i][2])
-        }
-        else if (road[i][1] === 1) {
-            costs[road[i][0]] = Math.min(costs[road[i][0]], road[i][2])
-        }
-    }
-    // 제일 비용이 낮은 노드 찾기
-    const findMinCostNode = () => {
-        let minCostNode = 0
-        for (let i = 2; i < costs.length; i ++) {
-            if (!visited[i] && costs[i] < costs[minCostNode]) {
-                minCostNode = i
-            }
-        }
-        return minCostNode
-    }
-    
-    // 최소 비용 노드에서 비용 업데이트하는 함수
-    const costUpdate = () => {
-        let minCostNode = findMinCostNode()
-        visited[minCostNode] = true
-        
-        for(let i = 0; i < road.length; i ++) {
-            if (road[i][0] === minCostNode || road[i][1] === minCostNode) {
-                let target = road[i][0] === minCostNode ? road[i][1] : road[i][0]
-                let cost = road[i][2]
-                // 비용 더 작으면 비용 업데이트
-                if (costs[minCostNode] + cost < costs[target]) {
-                    costs[target] = costs[minCostNode] + cost
-                }
-            }
-        }
-        return
-    }
-    
-    // N번 만큼 함수 비용 업데이트
-    for (let i = 0; i < N; i ++) {
-        costUpdate()
-    }
-    
-    // 만족하는 조건 카운트
+    // 거리 설정
+    let targetNode = 1
     let count = 1
-    for(let i = 2; i < costs.length; i ++) {
-        if (costs[i] <= K) count ++
+    while (count <= N) {
+        visited[targetNode] = true
+        
+        for (let r of road) {
+            let [nodeA, nodeB, cost] = r
+            if (nodeA === targetNode && nodeCosts[nodeA] + cost < nodeCosts[nodeB]) {
+                nodeCosts[nodeB] = nodeCosts[nodeA] + cost
+            }
+            else if (nodeB === targetNode && nodeCosts[nodeB] + cost < nodeCosts[nodeA]) {
+                nodeCosts[nodeA] = nodeCosts[nodeB] + cost
+            }
+        }
+        // 가장 가까운 노드 타겟으로 설정
+        targetNode = 0
+        for (let i = 2; i <= N; i ++) {
+            if (!visited[i] && nodeCosts[i] <= nodeCosts[targetNode]) {
+                targetNode = i
+            }
+        }
+        count ++
     }
-    
-    return count
+    let result = 0
+    for(let node of nodeCosts) {
+        if (node <= K) result ++
+    }
+    return result
 }
