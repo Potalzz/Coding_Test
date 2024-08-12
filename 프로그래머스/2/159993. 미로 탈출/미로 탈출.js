@@ -5,7 +5,6 @@
 1. 방문 여부 변수를 만들어준다.
 2. bfs를 통해서 레버까지의 최단 경로를 찾고, 소요 시간, 좌표를 저장한다.
 3. 레버부터 출구까지 최단 경로를 찾고, 레버까지의 소요 시간을 더해준다.
-
 */
 
 function solution(maps) {
@@ -20,8 +19,7 @@ function solution(maps) {
         // 시작지점 queue에 삽입 
         let queue = [[x, y, 0]]
         // 다음 이동할 곳이 없을 때 까지 이동
-        while (queue.length > 0) {
-            let [cx, cy, distance] = queue.shift()
+        for (let [cx, cy, distance] of queue) {
             // 방향 별로 이동
             for (let i = 0; i < 4; i ++) {
                 let nx = cx + dx[i] // 다음 x 좌표
@@ -40,6 +38,7 @@ function solution(maps) {
         // 목표 도달하지 못했을 경우 false 반환
         return [false, false, false]
     }
+    // 시작 좌표 찾기
     let startX, startY
     for (let i = 0; i < maps.length; i ++) {
         for (let j = 0; j < maps[0].length; j ++) {
