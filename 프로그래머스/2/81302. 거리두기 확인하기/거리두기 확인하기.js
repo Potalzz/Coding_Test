@@ -2,7 +2,7 @@
 맨해튼 거리 2 이하는 X
 한 칸에서 상하좌우는 2칸씩 대각선은 1칸씩 떨어져야 함.
 응시자 사이 파티션이 있는 경우 앉을 수 있음.
-대각 1칸은 파티션이 위치 못하므로 무조건 X
+대각 1칸은 파티션이 위치 못하므로 무조건 X 
 
 데이터 사이즈
 5 X 5크기의 대기실이 5개.
@@ -14,6 +14,14 @@
 3. 인접한 칸에 P가 없을 경우, 2칸 떨어진 상하좌우에 P가 있는지 확인하고, 있는경우 파티션 유무 체크 후 없으면 0반환하고 파티션 있으면 다음으로 넘어간다.
 4. 해당 과정을 5개의 대기실에 모두 적용하여 result에 추가한다.
 */
+function solution(places) {
+    const result = []
+    for(let i = 0; i < 5; i ++) {
+        result.push(checkPlace(places[i]))
+    }
+    return result
+}
+
 function checkPlace(place) {
         // 1. 대기실을 순회하며 P를 찾는다.
         for (let row = 0; row < 5; row ++) {
@@ -53,11 +61,3 @@ function checkPlace(place) {
         }
         return 1
     }
-
-function solution(places) {
-    const result = []
-    for(let i = 0; i < 5; i ++) {
-        result.push(checkPlace(places[i]))
-    }
-    return result
-}
