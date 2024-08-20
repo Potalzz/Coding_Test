@@ -14,13 +14,11 @@
 3. 인접한 칸에 P가 없을 경우, 2칸 떨어진 상하좌우에 P가 있는지 확인하고, 있는경우 파티션 유무 체크 후 없으면 0반환하고 파티션 있으면 다음으로 넘어간다.
 4. 해당 과정을 5개의 대기실에 모두 적용하여 result에 추가한다.
 */
-
-function solution(places) {
-    function checkPlace(place) {
+function checkPlace(place) {
         // 1. 대기실을 순회하며 P를 찾는다.
         for (let row = 0; row < 5; row ++) {
             for (let col = 0; col < 5; col ++) {
-                // 2. P가 나오면, 상하좌우 대각선순으로 확인
+                // 2. P가 나오면, 상하좌우 대각선 확인
                 if (place[row][col] === "P")  {
                     // 상
                     if (row - 1 >= 0 && place[row-1][col] === "P") return 0
@@ -34,8 +32,6 @@ function solution(places) {
                     // 우
                     if (col + 1 < 5 && place[row][col+1] === "P") return 0
                     if (col + 2 < 5 && place[row][col+2] === "P" && place[row][col+1] !== "X") return 0
-                    
-                    // 대각선
                     // 왼쪽 위
                     if (row - 1 >= 0 && col - 1 >= 0 && place[row-1][col-1] === 'P') {
                         if (place[row-1][col] === 'O' || place[row][col-1] === 'O') return 0
@@ -57,11 +53,11 @@ function solution(places) {
         }
         return 1
     }
-    
+
+function solution(places) {
     const result = []
     for(let i = 0; i < 5; i ++) {
         result.push(checkPlace(places[i]))
     }
-    
     return result
 }
