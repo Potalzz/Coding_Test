@@ -10,8 +10,6 @@ BFS로 구현
 2.3 상하좌우 4가지 방향을 각각 이동하여, 벽 또는 D에 부딪힐 때 까지 이동.
 2.4 해당 위치의 방문 여부를 판별하여 queue에 삽입.
 2.5 목표 위치에 도달하면, 횟수 반환.
-
-
 */
 
 function solution(board) {
@@ -68,8 +66,6 @@ function solution(board) {
         }
         return -1
     }
-    
-    
     
     return bfs(board)
 }
