@@ -1,6 +1,6 @@
 # [level 2] 멀쩡한 사각형 - 62048 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/62048) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/62048#qna) 
 
 ### 성능 요약
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2024년 08월 25일 15:20:21
+2024년 08월 25일 15:40:32
 
 ### 문제 설명
 

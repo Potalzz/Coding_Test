@@ -11,16 +11,19 @@ w * h - (w+h-최대공약수)
 */
 
 function solution(w, h) {
-    function gcd(w, h) {
+    
+    function gcd(w,h) {
         let a = Math.max(w,h)
         let b = Math.min(w,h)
+        
         while (b !== 0) {
             let temp = b
-            b = a % b   
+            b = a % b
             a = temp
         }
         return a
     }
     
-    return (w * h - (w + h - gcd(w,h)))
+    
+    return w * h - (w + h - gcd(w,h))
 }
