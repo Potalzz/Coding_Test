@@ -26,35 +26,35 @@ function saleCombination(users, emoticons) {
     function dfs(sales, len) {
         if (sales.length === len) {
         const buyingPrice = new Array(users.length).fill(0)
-            const tempResult = [0, 0]
+            const candidates = [0, 0]
             for (let i = 0; i < users.length; i ++) {
-                let limit = users[i][0]
+                let [limitPercentage, limitPrice] = users[i]
                 for (let j = 0; j < len; j ++) {
-                    if (limit <= sales[j]) {
+                    if (limitPercentage <= sales[j]) {
                         buyingPrice[i] += salePrice(emoticons[j], sales[j])
                         if (buyingPrice[i] >= users[i][1]) {
                             break
                         }
                     }
                 }
-                if (buyingPrice[i] >= users[i][1]) {
+                if (buyingPrice[i] >= limitPrice) {
                     buyingPrice[i] = Infinity
                 }
             }
             for (let price of buyingPrice) {
                 if (price === Infinity) {
-                    tempResult[0] ++
+                    candidates[0] ++
                 }
                 else {
-                    tempResult[1] += price
+                    candidates[1] += price
                 }
             }
             
-            if (tempResult[0] > result[0]) {
-                result = tempResult
+            if (candidates[0] > result[0]) {
+                result = candidates
             }
-            else if (tempResult[0] === result[0] && tempResult[1] > result[1]) {
-                result = tempResult
+            else if (candidates[0] === result[0] && candidates[1] > result[1]) {
+                result = candidates
             }
             return
         }
