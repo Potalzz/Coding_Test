@@ -9,17 +9,17 @@ w,h의 최대값이 1억이므로, 해당 사각형 크기를 통해서 계산�
 */
 
 function solution(w, h) {
-    function gcd(w,h) {
-        let a = Math.max(w,h)
-        let b = Math.min(w,h)
-        
-        while (b !== 0) {
-            let temp = b
-            b = a % b
-            a = temp
-        }
-        return a
+    let a = Math.max(w, h)
+    let b = Math.min(w, h)
+
+    return w * h - (w + h - gcd(a, b))
+}
+  
+function gcd(a, b) {
+    while (b !== 0) {
+        let temp = b
+        b = a % b
+        a = temp
     }
-    
-    return w * h - (w + h - gcd(w,h))
+    return a
 }
