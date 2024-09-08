@@ -11,17 +11,21 @@ b의 시작점이 a의 종료지점보다 작으면 겹치는 구간.
 3. 해당 미사일들을 1번의 요격으로 제거하고, 다음 미사일부터 다시 찾아나간다.
 
 */
-
 function solution(targets) {
-    targets.sort((a,b) => a[1] - b[1])
-    let count = 0
-    for (let i = 0; i < targets.length; i ++) {
-        let endPoint = targets[i][1]
-        while (i < targets.length - 1 && targets[i + 1][0] < endPoint) {
-            i ++                        
+    let answer = 1;
+    targets.sort((a, b) => {return a[1] - b[1]});
+    targets.sort((a, b) => {return a[0] - b[0]});
+
+    let e = targets[0][1];
+
+    for(const i of targets){
+        if(e > i[0]){
+            e = Math.min(i[1], e);
+        }else {
+            answer++;
+            e = i[1];
         }
-        count ++
     }
-    
-    return count
+
+    return answer;
 }
