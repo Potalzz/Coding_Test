@@ -1,70 +1,75 @@
 /*
-데이터의 최대 개수 : 8개
-속성의 최대 개수 : 20개
+column의 길이로 생성할 수 있는 조합을 모두 만들고, 유일성과 최소성을 체크하며 조합을 걸러낸다.
+유일성과 최소성을 체크하는 함수를 구현하고, 해당 함수를 통해 필터링 하기.
 
-유일성 : 데이터 중복이 없어야 함.
-최소성 : 데이터 식별을 가능케 하는 속성의 최소 개수.
+설계 과정
+크게 조합 생성, 유일성 체크, 최소성 체크 세 단계로 나누어 정답을 도출해낼 계획이다.
+1. 조합 생성
+    1.1 column에 따른 분류의 이름을 각각의 index에 맞춰 숫자로 치환한다.
+    1.2 해당 index의 조합으로 만들 수 있는 조합 모두 생성하기.
+    
+2. 유일성 체크
+    2.1 1의 과정에서 만들어진 조합으로, 
 
-속성 n개가 있을 때, n개의 속성들로 만들 수 있는 조합의 개수는 ?
-(중복 허용 X, 순서 상관 X)
-각 단계는 피보나치(n-(t-1))의 복잡도를 가진다.
-전체 시간 복잡도는 (n^2 - tn - n) 이므로 O(n^2)
-이를 통해 최대 연산 횟수를 계산해보면, n = 20일 때, 3800이다.
 */
 
 function solution(relation) {
     const arr = []
-    for (let i = 0; i < relation[0].length ; i++) {
+    for (let i = 0; i < relation[0].length; i ++) {
         arr.push(i)
     }
-    let candidates = getCandidates(arr)
-    // candidates.sort((a,b) => a[0] - b[0])
-    candidates.sort((a,b) => a.length - b.length)
-    // console.log(candidates)
-    candidates = checkUniqueness(relation, candidates)
-    // console.log(candidates)
-    candidates = checkMinimality(candidates)
-    // console.log(candidates)
-    
-    return candidates.length
+    let combinations = makeCombination(arr)
+    combinations.sort((a,b) => a.length - b.length)
+    // console.log(combinations)
+    combinations = uniqueness(combinations, relation)
+    // console.log(combinations)
+    combinations = minimality(combinations)
+    // console.log(combinations)
+        
+    return combinations.length
 }
 
-function getCandidates(arr) {
+// 중복 X 순서 상관 X
+function makeCombination(arr) {
     const result = []
-    function dfs(curr, start) {
-        if (curr.length > 0) {
-            result.push([...curr])
+    function dfs(start, curr) {
+        if (curr.length) {
+            result.push(curr.slice())
         }
+        
         for (let i = start; i < arr.length; i ++) {
             curr.push(arr[i])
-            dfs(curr, i + 1)
+            dfs(i + 1, curr)
             curr.pop()
         }
     }
-    dfs([], 0)
+    dfs(0, [])
+    
     return result
 }
 
-function checkUniqueness(relation, candidates) {
+function uniqueness(combinations, relation) {
     const result = []
-    
-    for (let candidate of candidates) {
+    for (let comb of combinations) {
         let set = new Set()
         for (let rel of relation) {
-            set.add(candidate.map((el) => rel[el]).join(','))
+            let w = ''
+            for (let c of comb) {
+                w += rel[c]
+            }
+            set.add(w)  
         }
         if (set.size === relation.length) {
-            result.push(candidate)
+            result.push(comb)
         }
-        
     }
     return result
 }
 
-function checkMinimality(candidates) {
-    function checkContains(arr, subArr) {
-        for (let item of subArr) {
-            if (arr.includes(item) === false) {
+function minimality(combinations) {
+    function checkContain(arr, subArr) {
+        for (let el of subArr) {
+            if (!arr.includes(el)) {
                 return false
             }
         }
@@ -72,19 +77,18 @@ function checkMinimality(candidates) {
     }
     let prev = 0
     let curr = 1
-    while (prev < candidates.length - 1) {
-        if (checkContains(candidates[curr], candidates[prev])) {
-            candidates.splice(curr, 1)
+    while (prev < combinations.length - 1) {
+        if (checkContain(combinations[curr], combinations[prev])) {
+            combinations.splice(curr, 1)
         }
         else {
             curr ++
         }
-        
-        if (curr > candidates.length - 1) {
+        if (curr >= combinations.length) {
             prev ++
             curr = prev + 1
         }
     }
     
-    return candidates
+    return combinations
 }
