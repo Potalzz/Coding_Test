@@ -17,32 +17,44 @@ n이 2천만 이상이라면, Math.floor(n / 1천만)부터 시작한다.
 */
 
 function solution(begin, end) {
-    const result = []
+    let result = []
+    if (begin === 1) {
+        result.push(0)
+        begin += 1
+    }
+    
     for (let i = begin; i <= end; i ++) {
-        result.push(checkNum(i))
-    }
-
-    return result
-}
-
-function checkNum(n) {
-    if (n === 1) {
-        return 0
-    }
-
-    let stack = []
-    for (let i = 2; i <= Math.sqrt(n); i ++) {
-        if (n % i === 0) {
-            stack.push(i)
-            if (n / i <= 1e7) {
-                return n / i
+        if (isPrime(i)) {
+            result.push(1)
+            continue
+        }
+        for (let j = 2; j <= Math.sqrt(i); j ++) {
+            if (i % j === 0) {
+                let value = i / j
+                if (value > 10000000) {
+                    let temp = j
+                    for (let k = j + 1; k <= Math.sqrt(i); k ++) {
+                        if (i % k === 0) {
+                            temp = k
+                        }
+                    }
+                    value = temp
+                }
+                result.push(value)
+                break
             }
         }
     }
     
-    if (stack.length) {
-        return stack[stack.length - 1]
+    return result
+}
+
+function isPrime(n) {
+    for (let i = 2; i <= Math.sqrt(n); i ++) {
+        if (n % i === 0) {
+            return false
+        }
     }
     
-    return 1
+    return true
 }
