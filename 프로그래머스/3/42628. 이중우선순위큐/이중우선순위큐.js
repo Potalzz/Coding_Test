@@ -1,133 +1,170 @@
 /*
-주어진 연산(특정 숫자 삽입, 최댓값 삭제, 최솟값 삭제)을 모두 시행하고
-최댓값, 최솟값 반환. 비어있으면 0,0반환
+최대힙으로 구현
+최대값 삭제 - 힙의 꼭대기 부분 삭제
+최소값 삭제
+- 해당 큐의 사이즈를 s라고 가정하고, 아래에서 log2^s만큼의 수를 비교하여 삭제 후 heapifyDown해준다.
+- log2^s만큼 비교하는 이유 : heap의 root는 지수로 증가하므로 가장 아래 루트의 원소의 개수만 비교.
 
-최소힙에 최대 값 제거 메서드를 추가해서 구현해준다.
-마지막에 최종 값 반환. 숫자는 둘다 넣어줌.
-length는 따로 측정해준다.
+최대힙에 최소값을 삭제해주는 메서드를 추가
 */
-// 최소힙 구현
-class MinHeap {
-    constructor() {
-        this.heap = [];
+
+function solution(operations) {
+    let heap = new MaxHeap()
+    
+    for (let order of operations) {
+        if (order[0] === 'I') {
+            if (order[2] === '-') {
+                let value = parseInt(order.slice(2))
+                value * - 1
+                heap.add(value)
+            }
+            else {
+                heap.add(parseInt(order.slice(2)))
+            }
+        }
+        else if (order[2] === '-') {
+            heap.deleteMin()
+        }
+        else {
+            heap.deleteMax()
+        }
+    }
+    // console.log(heap.size())
+    if (heap.size() === 0) {
+        return [0, 0]
+    }
+    let heapArray = heap.toArray()
+    
+    return [Math.max(...heapArray), Math.min(...heapArray)]
+}
+
+// class heap --------------------------------------------------------
+
+class MaxHeap {
+    constructor () {
+        this.heap = []
     }
     
-    getParentIndex(index) {
+    getParent (index) {
         return Math.floor((index - 1) / 2)
     }
     
-    getLeftChildIndex(index) {
+    getLeftChild (index) {
         return index * 2 + 1
     }
     
-    getRightChildIndex(index) {
-        return index * 2 + 2
+    getRightChild (index) {
+        return (index + 1) * 2
     }
     
-    swap(idx1, idx2) {
-        [this.heap[idx1], this.heap[idx2]] = [this.heap[idx2], this.heap[idx1]]
+    swap (index1, index2) {
+        [this.heap[index1], this.heap[index2]] = [this.heap[index2], this.heap[index1]]
     }
     
-    add(value) {
+    size () {
+        return this.heap.length
+    }
+    
+    add (value) {
         this.heap.push(value)
         this.heapifyUp()
     }
     
-    heapifyUp(idx = this.heap.length - 1) {
-        let index = idx
+    heapifyUp () {
+        let index = this.size() - 1
+        
         while (index > 0) {
-            let parentIndex = this.getParentIndex(index)
-            if (this.heap[index] < this.heap[parentIndex]) {
+            let parentIndex = this.getParent(index)
+            if (this.heap[index] > this.heap[parentIndex]) {
                 this.swap(index, parentIndex)
                 index = parentIndex
-            } else {
+            }
+            else {
                 break
             }
         }
+        // 최소값을 가장 오른쪽 끝에 배치.
+        if (this.heap[index] < this.heap[this.size() - 1]) {
+            this.swap(index, this.size() - 1)
+        }
     }
     
-    remove() {
-        if (this.heap.length === 0) return null
-        if (this.heap.length === 1) return this.heap.pop()
-        
-        const root = this.heap[0]
+    deleteMax () {
+        if (this.size() === 0) {
+            return
+        }
+        if (this.size() === 1) {
+            this.heap.pop()
+            return
+        }
+        let maxValue = this.heap[0]
         this.heap[0] = this.heap.pop()
         this.heapifyDown()
-        
-        return root
     }
     
-    heapifyDown(idx = 0) {
-        const length = this.heap.length
-        let index = idx
-        while(this.getLeftChildIndex(index) < length) {
-            let smallest = this.getLeftChildIndex(index)
-            let rightIndex = this.getRightChildIndex(index)
-            if (rightIndex < length && this.heap[rightIndex] < this.heap[smallest]) {
-                smallest = rightIndex
+    heapifyDown () {
+        let index = 0
+        
+        while (this.getLeftChild(index) < this.size()) {
+            let largest = this.getLeftChild(index)
+            let rightIndex = this.getRightChild(index)
+            if (rightIndex < this.size() && this.heap[rightIndex] > this.heap[largest]) {
+                largest = rightIndex
             }
-            if (this.heap[index] > this.heap[smallest]) {
-                this.swap(index, smallest)
-                index = smallest
-            } else {
+            
+            if (this.heap[index] < this.heap[largest]) {
+                this.swap(index, largest)
+                index = largest
+            }
+            else {
                 break
             }
         }
+        
+        if (this.heap[index] < this.heap[this.size() - 1]) {
+            this.swap(index, this.size() - 1)
+        }
     }
     
-    size() {
-        return this.heap.length
-    }
-    
-    peak() {
+    peak () {
         return this.heap[0]
     }
     
-    removeMax() {
-        if (this.size() === 0) return null
-        if (this.size() <= 2) return this.heap.pop()
+    deleteMin () {
+        if (this.size() === 0) {
+            return
+        }
         
-        let maxIndex = this.size() - 1
-        for (let i = Math.floor(this.size() / 2); i < this.size(); i ++) {
-            if (this.heap[i] > this.heap[maxIndex]) {
-                maxIndex = i
+        if (this.size() < 3) {
+            this.heap.pop()
+            return
+        }
+      
+        let len = this.size()
+        
+        let smallest = len - 1
+        let start = Math.floor(Math.sqrt(len))
+        for (let i = start; i < len; i ++) {
+            if (this.heap[i] < this.heap[smallest]) {
+                smallest = i
             }
         }
-        const max = this.heap[maxIndex]
-        if(maxIndex < this.size()) {
-            this.heapifyUp(maxIndex)
-            this.heapifyDown(maxIndex)
-        }
-        return max
-    }
-}
-
-function solution(operations) {
-    let answer = []
-    let minHeap = new MinHeap()
-    let length = 0
-    for(let i = 0; i < operations.length; i ++) {
-        if (operations[i][0] === "I") {
-            let num = parseInt(operations[i].slice(2))
-            minHeap.add(num)
-            length ++
-        } else if(operations[i][2] === "-") {
-            minHeap.remove()
-            if (length > 0) length --
-        } else {
-            minHeap.removeMax()
-            if (length > 0) length --
-        }
+        this.swap(smallest, len - 1)
+        
+        this.heap.pop()
     }
     
-    if(length === 0) {
-        answer = [0,0]
-    } else if (length >= 2) {
-        answer = [minHeap.removeMax(), minHeap.peak()]
-    } else {
-        answer = [minHeap.peak(), minHeap.peak()]
+    toArray () {
+        return [...this.heap]
     }
-
-    return answer
+    
+    
+    
+    
+    
+    
 }
-
+                                          
+                                          
+                                          
+                                          
