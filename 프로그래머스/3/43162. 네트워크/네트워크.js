@@ -13,7 +13,6 @@ function solution(n, computers) {
             }
         }
     }
-    console.log(adj)
     
     // BFS 탐색
     const visited = new Array(n + 1).fill(false)
@@ -31,6 +30,7 @@ function solution(n, computers) {
                 queue.push(...adj[v])
             }
         }
+        // 새로운 대륙에서 시작점 찾기
         for (let i = 1; i <= n; i ++) {
             if (!visited[i]) {
                 queue.push(i)
@@ -39,9 +39,6 @@ function solution(n, computers) {
             }
         }
     }
-    
-    console.log(visited)
-    
     
     return netWorkCount
 }
