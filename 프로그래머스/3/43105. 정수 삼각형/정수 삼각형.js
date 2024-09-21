@@ -14,11 +14,22 @@
 */
 
 function solution(triangle) {
-    for (let i = triangle.length - 2; i >= 0; i --) {
-        for (let j = 0; j < triangle[i].length; j ++) {
-            triangle[i][j] += Math.max(triangle[i+1][j], triangle[i+1][j+1])
+    for (let i = 0; i < triangle.length - 1; i ++) {
+        triangle[i+1][0] += triangle[i][0]
+        triangle[i+1][triangle[i+1].length -1] += triangle[i][triangle[i].length - 1]
+        for (let j = 1; j < triangle[i+1].length - 1; j ++) {
+            triangle[i+1][j] += Math.max(triangle[i][j-1], triangle[i][j])
         }
     }
     
-    return triangle[0][0]
+    let answer = 0
+    let height = triangle.length - 1
+    for (let i = 0; i < triangle.length; i ++) {
+        let value = triangle[height][i]
+        if (value > answer) {
+            answer = value
+        }
+    }
+    
+    return answer
 }
