@@ -1,0 +1,24 @@
+/*
+동적 계획법 5단계
+1. 하위 문제 정의
+2. 하위 문제 부분 해 구하기
+3. 해법과 하위 문제 연결
+4. 메모이제이션 or 재귀로 알고리즘 구현
+5. 원래 문제 풀기
+
+다음 row에서는 이전 column과 column + 1로만 이동 가능하다.
+
+하위 문제
+다음 row에서의 최대값 구하기
+
+*/
+
+function solution(triangle) {
+    for (let i = triangle.length - 2; i >= 0; i --) {
+        for (let j = 0; j < triangle[i].length; j ++) {
+            triangle[i][j] += Math.max(triangle[i+1][j], triangle[i+1][j+1])
+        }
+    }
+    
+    return triangle[0][0]
+}
