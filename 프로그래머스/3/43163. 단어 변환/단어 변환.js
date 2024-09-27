@@ -19,7 +19,6 @@ words배열을 그래프라고 생각해보자.
 단어의 개수를 n, 길이를 l로 가정하자.
 우선 주어진 배열을 통해 인접 리스트로 만들 것이다.
 인접 리스트를 만들기 위해서는, words의 문자를 서로 하나하나 비교해봐야 한다.
-방향 그래프로 만들 것이기 때문에, target과의 문자 거리가 낮은 쪽으로 이동해야 한다 // 무방향 그래프로도 가능한다.
 단어를 다른 단어와 비교하는데 걸리는 시간은 단어의 길이인 l.
 해당 작업을 n개의 단어와 비교하면 하나의 단어에 nl의 시간이 소요된다.
 이를 모든 단어에 각각 실행해주면 인접리스트 제작에는 O(n^2 * l)의 시간이 걸린다.
@@ -31,72 +30,52 @@ words배열을 그래프라고 생각해보자.
 1. 인접 리스트 만들기
     1.1 단어의 알파벳이 하나만 다른 경우만 연결
 2. 인접 리스트를 통해 그래프 탐색하며 이동 횟수 저장
-3. 최소 이동 횟수 반환
-
-
+3. target을 만나면 최소 이동 횟수 반환
+4. 인접 리스트를 모두 방문했는데 target을 만나지 못했을 경우, 0 반환.
 */
 
 function solution(begin, target, words) {
-    function check() {
-        console.log('adj : ', adj)
-        console.log('visited : ', visited)
-        console.log('queue : ', queue)
-        console.log('distance : ', distance)
-        
-    }
     // 변환 불가능한 경우 0 반환
     if (!words.includes(target)) {
         return 0
     }
     
-    const adj = {}
-    const visited = {}
-    
-    // words배열에 시작지점 추가
-    words.unshift(begin)
-    
-    for (let i = 0; i < words.length; i ++) {
-        let word = words[i]
-        adj[word] = []
-        visited[word] = false
-        for (let j = 0; j < words.length; j ++) {
-            let nWord = words[j]
-            let count = 0
-            let index = 0
-            while (count < 2 && index < word.length) {
-                if (word[index] !== nWord[index]) {
-                    count ++
-                }
-                index ++
-            }
-            if (count === 1) {
-                adj[word].push(nWord)    
-            }
-        }
-    }
-    
-    let distance = 0
-    let queue = []
-    queue.push(...adj[begin])
-    visited[begin] = true
+    const allWords = [begin, ...words]
+    const adjList = buildAdjacencyList(allWords)
+    const visited = new Set()
+    const queue = [{ word : begin, depth : 0 }]
     
     while (queue.length > 0) {
-        let word = queue.slice()
-        queue = []
-        distance ++
-        for (let w of word) {
-            if (visited[w]) continue
-            visited[w] = true
-            if (w === target) {
-                return distance
-            }
-            queue.push(...adj[w])
+        const { word, depth } = queue.shift()
+        
+        if (word === target) {
+            return depth
         }
+        
+        adjList[word].forEach((neighbor) => {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push({ word: neighbor, depth: depth + 1 });
+            }
+        });
     }
     
-    check()
-    
-    
     return 0
+    
+    function buildAdjacencyList(wordsArray) {
+        return wordsArray.reduce((acc, word) => {
+            acc[word] = wordsArray.filter((otherWord) => (
+                word !== otherWord && isTransformed(word, otherWord)
+            ));
+            return acc
+        }, {});
+    }
+    
+    function isTransformed(word1, word2) {
+        const diffCount = word1.split('').reduce((count, char, i) => (
+            char !== word2[i] ? count + 1 : count
+        ), 0) 
+            
+        return diffCount === 1
+    }
 }
-
